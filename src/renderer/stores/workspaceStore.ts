@@ -8,6 +8,8 @@ interface WorkspaceState {
   deletedImages: ImageFile[]
   currentIndex: number
   isLoading: boolean
+  viewMode: 'browse' | 'deleted'
+  deletedIndex: number
 
   openFolder: () => Promise<void>
   setCurrentIndex: (index: number) => void
@@ -16,6 +18,12 @@ interface WorkspaceState {
   softDeleteCurrent: () => Promise<void>
   restoreImage: (deletedPath: string) => Promise<void>
   refreshDeleted: () => Promise<void>
+  enterDeletedView: () => Promise<void>
+  exitDeletedView: () => void
+  setDeletedIndex: (index: number) => void
+  nextDeletedImage: () => void
+  prevDeletedImage: () => void
+  restoreCurrentDeleted: () => Promise<void>
 }
 
 export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
@@ -24,6 +32,8 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
   deletedImages: [],
   currentIndex: 0,
   isLoading: false,
+  viewMode: 'browse',
+  deletedIndex: 0,
 
   openFolder: async () => {
     set({ isLoading: true })
@@ -108,5 +118,64 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
     if (!folderPath) return
     const deleted = await api.listDeleted(folderPath)
     set({ deletedImages: deleted })
+  },
+
+  enterDeletedView: async () => {
+    const { folderPath } = get()
+    if (!folderPath) return
+    const deleted = await api.listDeleted(folderPath)
+    set({ deletedImages: deleted, viewMode: 'deleted', deletedIndex: 0 })
+  },
+
+  exitDeletedView: () => {
+    set({ viewMode: 'browse' })
+  },
+
+  setDeletedIndex: (index) => {
+    const { deletedImages } = get()
+    if (index >= 0 && index < deletedImages.length) {
+      set({ deletedIndex: index })
+    }
+  },
+
+  nextDeletedImage: () => {
+    const { deletedIndex, deletedImages } = get()
+    if (deletedIndex < deletedImages.length - 1) {
+      set({ deletedIndex: deletedIndex + 1 })
+    }
+  },
+
+  prevDeletedImage: () => {
+    const { deletedIndex } = get()
+    if (deletedIndex > 0) {
+      set({ deletedIndex: deletedIndex - 1 })
+    }
+  },
+
+  restoreCurrentDeleted: async () => {
+    const { folderPath, deletedImages, deletedIndex } = get()
+    if (!folderPath || deletedImages.length === 0) return
+
+    const imageToRestore = deletedImages[deletedIndex]
+    const newDeletedImages = deletedImages.filter((_, i) => i !== deletedIndex)
+    const newDeletedIndex = Math.min(deletedIndex, Math.max(0, newDeletedImages.length - 1))
+
+    // Optimistic update
+    set({ deletedImages: newDeletedImages, deletedIndex: newDeletedIndex })
+
+    try {
+      await api.restoreImage(imageToRestore.path, folderPath)
+      const images = await api.listImages(folderPath)
+      const deleted = await api.listDeleted(folderPath)
+      set({ images, deletedImages: deleted })
+
+      if (deleted.length === 0) {
+        set({ viewMode: 'browse' })
+      }
+    } catch (err) {
+      // Rollback on failure
+      set({ deletedImages, deletedIndex })
+      console.error('Failed to restore image:', err)
+    }
   }
 }))
