@@ -1,17 +1,22 @@
-import { Group, Button, Text } from '@mantine/core'
+import { Group, Button, Text, SegmentedControl } from '@mantine/core'
 import { notifications } from '@mantine/notifications'
 import { KeyboardHint } from '../common/KeyboardHint'
 import { useWorkspaceStore } from '../../stores/workspaceStore'
 import { useEditorStore } from '../../stores/editorStore'
+import { useSettingsStore, type FilmStripOrientation } from '../../stores/settingsStore'
+import { useViewerStore } from '../../stores/viewerStore'
 import type { ImageFile } from '../../types/image'
+import { PanelBottom, PanelRight, PanelLeft } from 'lucide-react'
 
 interface ViewerToolbarProps {
   currentImage: ImageFile | null
 }
 
 export function ViewerToolbar({ currentImage }: ViewerToolbarProps) {
-  const { nextImage, softDeleteCurrent, restoreImage, folderPath } = useWorkspaceStore()
+  const { nextImage, softDeleteCurrent, restoreImage, folderPath, viewMode, restoreCurrentDeleted } = useWorkspaceStore()
   const { enterEditMode } = useEditorStore()
+  const { filmStripOrientation, setFilmStripOrientation } = useSettingsStore()
+  const { zoomPercent, requestReset } = useViewerStore()
 
   const handleDelete = async () => {
     if (!currentImage || !folderPath) return
@@ -43,27 +48,59 @@ export function ViewerToolbar({ currentImage }: ViewerToolbarProps) {
 
   return (
     <Group
-      justify="center"
+      justify="space-between"
       gap="sm"
       p="sm"
       style={{ borderTop: '1px solid var(--mantine-color-default-border)' }}
     >
-      <Button variant="subtle" onClick={nextImage} disabled={!currentImage} title="Keep & Next (→ or j)">
-        Keep &amp; Next <KeyboardHint keys={['→']} />
-      </Button>
+      <Group gap="sm">
+        {viewMode === 'deleted' ? (
+          <Button color="green" variant="light" onClick={restoreCurrentDeleted} disabled={!currentImage} title="Restore (r)">
+            Restore <KeyboardHint keys={['r']} />
+          </Button>
+        ) : (
+          <>
+            <Button variant="subtle" onClick={nextImage} disabled={!currentImage} title="Keep & Next (→ or j)">
+              Keep &amp; Next <KeyboardHint keys={['→']} />
+            </Button>
+
+            <Button
+              variant="light"
+              onClick={() => enterEditMode('crop')}
+              disabled={!currentImage}
+              title="Edit (e)"
+            >
+              Edit <KeyboardHint keys={['e']} />
+            </Button>
+
+            <Button color="red" variant="light" onClick={handleDelete} disabled={!currentImage} title="Delete (d)">
+              Delete <KeyboardHint keys={['d']} />
+            </Button>
+          </>
+        )}
+      </Group>
 
       <Button
-        variant="light"
-        onClick={() => enterEditMode('crop')}
+        variant="subtle"
+        size="compact-xs"
+        onClick={requestReset}
+        title="Reset zoom (0)"
         disabled={!currentImage}
-        title="Edit (e)"
+        style={{ fontVariantNumeric: 'tabular-nums', minWidth: 52 }}
       >
-        Edit <KeyboardHint keys={['e']} />
+        {zoomPercent}% <KeyboardHint keys={['0']} />
       </Button>
 
-      <Button color="red" variant="light" onClick={handleDelete} disabled={!currentImage} title="Delete (d)">
-        Delete <KeyboardHint keys={['d']} />
-      </Button>
+      <SegmentedControl
+        size="xs"
+        value={filmStripOrientation}
+        onChange={(v) => setFilmStripOrientation(v as FilmStripOrientation)}
+        data={[
+          { label: <PanelLeft size={16} className='flex' />, value: 'left' },
+          { label: <PanelBottom size={16} className='flex' />, value: 'bottom' },
+          { label: <PanelRight size={16} className='flex' />, value: 'right' }
+        ]}
+      />
     </Group>
   )
 }
