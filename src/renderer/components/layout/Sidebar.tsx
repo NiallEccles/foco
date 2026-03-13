@@ -2,13 +2,13 @@ import { Stack, Button, Text, Badge, Divider, Group } from '@mantine/core'
 import { useWorkspaceStore } from '../../stores/workspaceStore'
 
 export function Sidebar() {
-  const { folderPath, images, deletedImages, openFolder } = useWorkspaceStore()
+  const { folderPath, images, deletedImages, openFolder, viewMode, enterDeletedView, exitDeletedView } = useWorkspaceStore()
 
   const folderName = folderPath ? folderPath.split('/').pop() || folderPath : null
 
   return (
     <Stack p="md" gap="sm" style={{ height: '100%' }}>
-      <Button onClick={openFolder} variant="filled" fullWidth>
+      <Button onClick={openFolder} variant="filled" fullWidth disabled={viewMode === 'deleted'}>
         Open Folder
       </Button>
 
@@ -31,15 +31,34 @@ export function Sidebar() {
             </Badge>
           </Group>
 
-          {deletedImages.length > 0 && (
-            <Group justify="space-between">
-              <Text size="sm" c="dimmed">
+          {viewMode === 'deleted' ? (
+            <Button
+              variant="light"
+              color="gray"
+              size="xs"
+              fullWidth
+              onClick={exitDeletedView}
+            >
+              ← Back to Images
+            </Button>
+          ) : (
+            deletedImages.length > 0 && (
+              <Button
+                variant="subtle"
+                color="orange"
+                size="xs"
+                fullWidth
+                justify="space-between"
+                rightSection={
+                  <Badge size="sm" color="orange" variant="filled">
+                    {deletedImages.length}
+                  </Badge>
+                }
+                onClick={enterDeletedView}
+              >
                 Deleted
-              </Text>
-              <Badge size="sm" color="orange">
-                {deletedImages.length}
-              </Badge>
-            </Group>
+              </Button>
+            )
           )}
         </>
       )}
@@ -49,15 +68,20 @@ export function Sidebar() {
         <Text size="xs" c="dimmed">
           Shortcuts:
         </Text>
-        <Text size="xs" c="dimmed">
-          ← / k — previous
-        </Text>
-        <Text size="xs" c="dimmed">
-          → / j — next
-        </Text>
-        <Text size="xs" c="dimmed">
-          d / Del — soft delete
-        </Text>
+        {viewMode === 'deleted' ? (
+          <>
+            <Text size="xs" c="dimmed">← / k — previous</Text>
+            <Text size="xs" c="dimmed">→ / j — next</Text>
+            <Text size="xs" c="dimmed">r — restore</Text>
+            <Text size="xs" c="dimmed">Esc — back to browse</Text>
+          </>
+        ) : (
+          <>
+            <Text size="xs" c="dimmed">← / k — previous</Text>
+            <Text size="xs" c="dimmed">→ / j — next</Text>
+            <Text size="xs" c="dimmed">d / Del — soft delete</Text>
+          </>
+        )}
       </Stack>
     </Stack>
   )
