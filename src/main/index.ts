@@ -60,7 +60,6 @@ app.whenReady().then(() => {
       const data = await readFile(filePath)
       return new Response(data, { headers: { 'Content-Type': mime[ext] ?? 'application/octet-stream' } })
     } catch (err) {
-      console.error('[safe-file] error for', rawUrl, ':', err)
       return new Response('Not found', { status: 404 })
     }
   })
