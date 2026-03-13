@@ -11,7 +11,9 @@ const api: FocoAPI = {
     ipcRenderer.invoke('save-image', sourcePath, operations),
   saveImageAs: (sourcePath: string, operations: ImageOperation[]) =>
     ipcRenderer.invoke('save-image-as', sourcePath, operations),
-  getImageMetadata: (imagePath: string) => ipcRenderer.invoke('get-image-metadata', imagePath)
+  getImageMetadata: (imagePath: string) => ipcRenderer.invoke('get-image-metadata', imagePath),
+  getThumbnail: (imagePath: string, folderPath: string) =>
+    ipcRenderer.invoke('get-thumbnail', imagePath, folderPath)
 }
 
 contextBridge.exposeInMainWorld('api', api)
