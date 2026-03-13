@@ -44,4 +44,5 @@ export interface FocoAPI {
   saveImage: (sourcePath: string, operations: ImageOperation[]) => Promise<void>
   saveImageAs: (sourcePath: string, operations: ImageOperation[]) => Promise<string | null>
   getImageMetadata: (imagePath: string) => Promise<ImageMetadata>
+  getThumbnail: (imagePath: string, folderPath: string) => Promise<string>
 }
