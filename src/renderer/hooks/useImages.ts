@@ -1,16 +1,19 @@
 import { useWorkspaceStore } from '../stores/workspaceStore'
 
 export function useImages() {
-  const { images, currentIndex, folderPath, isLoading } = useWorkspaceStore()
+  const { images, deletedImages, currentIndex, deletedIndex, folderPath, isLoading, viewMode } = useWorkspaceStore()
 
-  const currentImage = images[currentIndex] ?? null
+  const activeImages = viewMode === 'deleted' ? deletedImages : images
+  const activeIndex = viewMode === 'deleted' ? deletedIndex : currentIndex
+  const currentImage = activeImages[activeIndex] ?? null
 
   return {
     images,
     currentImage,
-    currentIndex,
+    currentIndex: activeIndex,
     folderPath,
     isLoading,
-    total: images.length
+    total: activeImages.length,
+    viewMode
   }
 }
