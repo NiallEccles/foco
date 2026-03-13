@@ -2,7 +2,7 @@ import { Group, Text } from '@mantine/core'
 import { useImages } from '../../hooks/useImages'
 
 export function StatusBar() {
-  const { currentImage, currentIndex, total } = useImages()
+  const { currentImage, currentIndex, total, viewMode } = useImages()
 
   const formatSize = (bytes: number) => {
     if (bytes < 1024) return `${bytes} B`
@@ -22,7 +22,7 @@ export function StatusBar() {
       }}
     >
       <Text size="xs" c="dimmed">
-        {total > 0 ? `${currentIndex + 1} / ${total}` : 'No images'}
+        {total > 0 ? `${currentIndex + 1} / ${total}${viewMode === 'deleted' ? ' (deleted)' : ''}` : viewMode === 'deleted' ? 'No deleted images' : 'No images'}
       </Text>
       {currentImage && (
         <Group gap="md">
