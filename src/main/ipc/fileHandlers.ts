@@ -1,5 +1,6 @@
 import { ipcMain, dialog } from 'electron'
 import { listImages, softDelete, restoreImage, listDeletedImages } from '../services/fileService'
+import { getThumbnailPath } from '../services/thumbnailService'
 
 export function registerFileHandlers(): void {
   ipcMain.handle('open-folder', async () => {
@@ -26,5 +27,9 @@ export function registerFileHandlers(): void {
 
   ipcMain.handle('list-deleted', async (_event, folderPath: string) => {
     return listDeletedImages(folderPath)
+  })
+
+  ipcMain.handle('get-thumbnail', async (_event, imagePath: string, folderPath: string) => {
+    return getThumbnailPath(imagePath, folderPath)
   })
 }
