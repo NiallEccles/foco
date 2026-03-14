@@ -2,6 +2,10 @@ import { contextBridge, ipcRenderer } from 'electron'
 import type { FocoAPI, ImageOperation } from './types'
 
 const api: FocoAPI = {
+  windowMinimize: () => ipcRenderer.send('window-minimize'),
+  windowMaximize: () => ipcRenderer.send('window-maximize'),
+  windowClose: () => ipcRenderer.send('window-close'),
+  getPlatform: () => process.platform,
   openFolder: () => ipcRenderer.invoke('open-folder'),
   listImages: (folderPath) => ipcRenderer.invoke('list-images', folderPath),
   softDelete: (imagePath, folderPath) => ipcRenderer.invoke('soft-delete', imagePath, folderPath),
@@ -13,7 +17,8 @@ const api: FocoAPI = {
     ipcRenderer.invoke('save-image-as', sourcePath, operations),
   getImageMetadata: (imagePath: string) => ipcRenderer.invoke('get-image-metadata', imagePath),
   getThumbnail: (imagePath: string, folderPath: string) =>
-    ipcRenderer.invoke('get-thumbnail', imagePath, folderPath)
+    ipcRenderer.invoke('get-thumbnail', imagePath, folderPath),
+  getExifData: (imagePath: string) => ipcRenderer.invoke('get-exif-data', imagePath)
 }
 
 contextBridge.exposeInMainWorld('api', api)
