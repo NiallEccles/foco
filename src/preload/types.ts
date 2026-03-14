@@ -35,7 +35,24 @@ export interface ImageMetadata {
   height: number
 }
 
+export interface ExifData {
+  make?: string
+  model?: string
+  lensModel?: string
+  iso?: number
+  fNumber?: number
+  exposureTime?: number
+  focalLength?: number
+  dateTimeOriginal?: string
+  gpsLatitude?: number
+  gpsLongitude?: number
+}
+
 export interface FocoAPI {
+  windowMinimize: () => void
+  windowMaximize: () => void
+  windowClose: () => void
+  getPlatform: () => string
   openFolder: () => Promise<OpenFolderResult | null>
   listImages: (folderPath: string) => Promise<ImageFile[]>
   softDelete: (imagePath: string, folderPath: string) => Promise<void>
@@ -45,4 +62,5 @@ export interface FocoAPI {
   saveImageAs: (sourcePath: string, operations: ImageOperation[]) => Promise<string | null>
   getImageMetadata: (imagePath: string) => Promise<ImageMetadata>
   getThumbnail: (imagePath: string, folderPath: string) => Promise<string>
+  getExifData: (imagePath: string) => Promise<ExifData | null>
 }
