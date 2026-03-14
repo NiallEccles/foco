@@ -43,7 +43,7 @@ export function FilmStrip() {
 
   const viewportStyle = isHorizontal
     ? { height: 100, overflowX: 'auto' as const, overflowY: 'hidden' as const, ...borderStyle }
-    : { width: 100, height: '100%', overflowY: 'auto' as const, overflowX: 'hidden' as const, flexShrink: 0, ...borderStyle }
+    : { width: 100, height: '100%', overflowY: 'auto' as const, overflowX: 'hidden' as const, paddingTop: 'var(--app-shell-header-height)', flexShrink: 0, ...borderStyle }
 
   const innerStyle = isHorizontal
     ? { width: virtualizer.getTotalSize(), height: '100%', position: 'relative' as const }
