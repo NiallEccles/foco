@@ -1,6 +1,7 @@
 import { ipcMain, dialog } from 'electron'
 import { applyOperations, getImageMetadata } from '../services/imageService'
 import type { ImageOperation } from '../services/imageService'
+import { getExifData } from '../services/exifService'
 
 export function registerImageHandlers(): void {
   ipcMain.handle(
@@ -27,5 +28,9 @@ export function registerImageHandlers(): void {
 
   ipcMain.handle('get-image-metadata', async (_event, imagePath: string) => {
     return getImageMetadata(imagePath)
+  })
+
+  ipcMain.handle('get-exif-data', async (_event, imagePath: string) => {
+    return getExifData(imagePath)
   })
 }
