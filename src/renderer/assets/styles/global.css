@@ -16,3 +16,10 @@ body {
   height: 100vh;
   width: 100vw;
 }
+
+/* Ensure interactive children of drag regions remain clickable */
+.title-bar button,
+.title-bar a,
+.title-bar input {
+  -webkit-app-region: no-drag;
+}
