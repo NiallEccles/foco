@@ -1,8 +1,10 @@
 import { Stack, Button, Text, Badge, Divider, Group } from '@mantine/core'
 import { useWorkspaceStore } from '../../stores/workspaceStore'
+import { useSettingsStore } from '../../stores/settingsStore'
 
 export function Sidebar() {
   const { folderPath, images, deletedImages, openFolder, viewMode, enterDeletedView, exitDeletedView } = useWorkspaceStore()
+  const { filmStripOrientation } = useSettingsStore();
 
   const folderName = folderPath ? folderPath.split('/').pop() || folderPath : null
 
@@ -70,15 +72,15 @@ export function Sidebar() {
         </Text>
         {viewMode === 'deleted' ? (
           <>
-            <Text size="xs" c="dimmed">← / k — previous</Text>
-            <Text size="xs" c="dimmed">→ / j — next</Text>
+            {["left", "right"].includes(filmStripOrientation) && <Text size="xs" c="dimmed">↑ / ↓ — switch image</Text>}
+            {["bottom"].includes(filmStripOrientation) && <Text size="xs" c="dimmed">← / → — switch image</Text>}
             <Text size="xs" c="dimmed">r — restore</Text>
             <Text size="xs" c="dimmed">Esc — back to browse</Text>
           </>
         ) : (
           <>
-            <Text size="xs" c="dimmed">← / k — previous</Text>
-            <Text size="xs" c="dimmed">→ / j — next</Text>
+            {["left", "right"].includes(filmStripOrientation) && <Text size="xs" c="dimmed">↑ / ↓ — switch image</Text>}
+            {["bottom"].includes(filmStripOrientation) && <Text size="xs" c="dimmed">← / → — switch image</Text>}
             <Text size="xs" c="dimmed">d / Del — soft delete</Text>
           </>
         )}
