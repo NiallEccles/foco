@@ -6,7 +6,7 @@ import { useEditorStore } from '../../stores/editorStore'
 import { useSettingsStore, type FilmStripOrientation } from '../../stores/settingsStore'
 import { useViewerStore } from '../../stores/viewerStore'
 import type { ImageFile } from '../../types/image'
-import { PanelBottom, PanelRight, PanelLeft } from 'lucide-react'
+import { PanelBottom, PanelRight, PanelLeft, Info } from 'lucide-react'
 
 interface ViewerToolbarProps {
   currentImage: ImageFile | null
@@ -15,7 +15,7 @@ interface ViewerToolbarProps {
 export function ViewerToolbar({ currentImage }: ViewerToolbarProps) {
   const { nextImage, softDeleteCurrent, restoreImage, folderPath, viewMode, restoreCurrentDeleted } = useWorkspaceStore()
   const { enterEditMode } = useEditorStore()
-  const { filmStripOrientation, setFilmStripOrientation } = useSettingsStore()
+  const { filmStripOrientation, setFilmStripOrientation, exifPanelOpen, toggleExifPanel } = useSettingsStore()
   const { zoomPercent, requestReset } = useViewerStore()
 
   const handleDelete = async () => {
@@ -80,16 +80,28 @@ export function ViewerToolbar({ currentImage }: ViewerToolbarProps) {
         )}
       </Group>
 
-      <Button
-        variant="subtle"
-        size="compact-xs"
-        onClick={requestReset}
-        title="Reset zoom (0)"
-        disabled={!currentImage}
-        style={{ fontVariantNumeric: 'tabular-nums', minWidth: 52 }}
-      >
-        {zoomPercent}% <KeyboardHint keys={['0']} />
-      </Button>
+      <Group gap="xs">
+        <Button
+          variant="subtle"
+          size="compact-xs"
+          onClick={requestReset}
+          title="Reset zoom (0)"
+          disabled={!currentImage}
+          style={{ fontVariantNumeric: 'tabular-nums', minWidth: 52 }}
+        >
+          {zoomPercent}% <KeyboardHint keys={['0']} />
+        </Button>
+
+        <Button
+          variant={exifPanelOpen ? 'light' : 'subtle'}
+          size="compact-xs"
+          onClick={toggleExifPanel}
+          disabled={!currentImage}
+          title="Image info (i)"
+        >
+          <Info size={14} />
+        </Button>
+      </Group>
 
       <SegmentedControl
         size="xs"
