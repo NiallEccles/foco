@@ -53,6 +53,7 @@ export function EditorCanvas({ image }: EditorCanvasProps) {
     imageHeight: naturalSize.height,
     displayWidth: displaySize.width,
     displayHeight: displaySize.height,
+    imageRef: imgRef,
     onCropChange: setCropRect
   })
 
