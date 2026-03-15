@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import type { ImageFile } from '../types/image'
 import { api } from '../services/api'
+import { useSettingsStore } from './settingsStore'
 
 interface WorkspaceState {
   folderPath: string | null
@@ -12,6 +13,7 @@ interface WorkspaceState {
   deletedIndex: number
 
   openFolder: () => Promise<void>
+  openFolderPath: (folderPath: string) => Promise<void>
   setCurrentIndex: (index: number) => void
   nextImage: () => void
   prevImage: () => void
@@ -39,6 +41,7 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
     set({ isLoading: true })
     const result = await api.openFolder()
     if (result) {
+      useSettingsStore.getState().addRecentFolder(result.folderPath)
       set({
         folderPath: result.folderPath,
         images: result.images,
@@ -46,6 +49,17 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
         isLoading: false
       })
     } else {
+      set({ isLoading: false })
+    }
+  },
+
+  openFolderPath: async (folderPath) => {
+    set({ isLoading: true })
+    try {
+      const images = await api.listImages(folderPath)
+      useSettingsStore.getState().addRecentFolder(folderPath)
+      set({ folderPath, images, currentIndex: 0, isLoading: false, viewMode: 'browse' })
+    } catch {
       set({ isLoading: false })
     }
   },
