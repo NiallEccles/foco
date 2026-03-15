@@ -1,7 +1,8 @@
-import { Stack, Text, Divider, Skeleton, ScrollArea, Group, CopyButton, ActionIcon, Tooltip } from '@mantine/core'
+import { Stack, Text, Divider, Skeleton, ScrollArea, Group, CopyButton, ActionIcon, Tooltip, UnstyledButton } from '@mantine/core'
 import { Copy, Check } from 'lucide-react'
 import { useImages } from '../../hooks/useImages'
 import { useExif } from '../../hooks/useExif'
+import { GpsMap } from './GpsMap'
 
 function formatShutter(exposureTime: number): string {
   if (exposureTime >= 1) return `${exposureTime}s`
@@ -103,7 +104,7 @@ export function ExifPanel() {
               </>
             )}
 
-            {gpsString && (
+            {gpsString && exif?.gpsLatitude != null && exif?.gpsLongitude != null && (
               <>
                 <Text size="xs" fw={600}>Location</Text>
                 <Group justify="space-between" gap="xs" wrap="nowrap">
@@ -120,6 +121,14 @@ export function ExifPanel() {
                     )}
                   </CopyButton>
                 </Group>
+                <GpsMap lat={exif.gpsLatitude} lon={exif.gpsLongitude} />
+                <UnstyledButton
+                  onClick={() => window.api.openExternal(
+                    `https://www.openstreetmap.org/?mlat=${exif.gpsLatitude}&mlon=${exif.gpsLongitude}&zoom=14`
+                  )}
+                >
+                  <Text size="xs" c="blue">Open in Maps ↗</Text>
+                </UnstyledButton>
               </>
             )}
           </Stack>
