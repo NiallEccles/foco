@@ -1,4 +1,4 @@
-import { ipcMain, BrowserWindow } from 'electron'
+import { ipcMain, BrowserWindow, shell } from 'electron'
 
 export function registerWindowHandlers(): void {
   ipcMain.on('window-minimize', (event) => {
@@ -13,5 +13,9 @@ export function registerWindowHandlers(): void {
 
   ipcMain.on('window-close', (event) => {
     BrowserWindow.fromWebContents(event.sender)?.close()
+  })
+
+  ipcMain.on('open-external', (_event, url: string) => {
+    shell.openExternal(url)
   })
 }
