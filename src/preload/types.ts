@@ -63,4 +63,5 @@ export interface FocoAPI {
   getImageMetadata: (imagePath: string) => Promise<ImageMetadata>
   getThumbnail: (imagePath: string, folderPath: string) => Promise<string>
   getExifData: (imagePath: string) => Promise<ExifData | null>
+  openExternal: (url: string) => void
 }
