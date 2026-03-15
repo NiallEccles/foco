@@ -18,7 +18,8 @@ const api: FocoAPI = {
   getImageMetadata: (imagePath: string) => ipcRenderer.invoke('get-image-metadata', imagePath),
   getThumbnail: (imagePath: string, folderPath: string) =>
     ipcRenderer.invoke('get-thumbnail', imagePath, folderPath),
-  getExifData: (imagePath: string) => ipcRenderer.invoke('get-exif-data', imagePath)
+  getExifData: (imagePath: string) => ipcRenderer.invoke('get-exif-data', imagePath),
+  openExternal: (url: string) => ipcRenderer.send('open-external', url)
 }
 
 contextBridge.exposeInMainWorld('api', api)
