@@ -1,6 +1,7 @@
 import { Stack, Button, Text, Badge, Divider, Group } from '@mantine/core'
 import { useWorkspaceStore } from '../../stores/workspaceStore'
 import { useSettingsStore } from '../../stores/settingsStore'
+import { RecentFolders } from '../sidebar/RecentFolders'
 
 export function Sidebar() {
   const { folderPath, images, deletedImages, openFolder, viewMode, enterDeletedView, exitDeletedView } = useWorkspaceStore()
@@ -13,6 +14,8 @@ export function Sidebar() {
       <Button onClick={openFolder} variant="filled" fullWidth disabled={viewMode === 'deleted'}>
         Open Folder
       </Button>
+
+      <RecentFolders />
 
       {folderPath && (
         <>
