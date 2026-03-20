@@ -3,7 +3,10 @@ import { Box, Center, Text, Loader } from '@mantine/core'
 import type { ImageFile } from '../../types/image'
 import { useWorkspaceStore } from '../../stores/workspaceStore'
 import { useViewerStore } from '../../stores/viewerStore'
+import { useSettingsStore } from '../../stores/settingsStore'
 import { useCanvasTransform } from '../../hooks/useCanvasTransform'
+import { useHistogram } from '../../hooks/useHistogram'
+import { Histogram } from './Histogram'
 
 interface ImageViewerProps {
   image: ImageFile | null
@@ -20,12 +23,17 @@ export function ImageViewer({ image }: ImageViewerProps) {
   const { images, currentIndex } = useWorkspaceStore()
   const { setZoomPercent } = useViewerStore()
   const resetRequestCount = useViewerStore((s) => s.resetRequestCount)
+  const zoomInCount = useViewerStore((s) => s.zoomInCount)
+  const zoomOutCount = useViewerStore((s) => s.zoomOutCount)
+  const showHistogram = useSettingsStore((s) => s.showHistogram)
+  const { histogram } = useHistogram(showHistogram ? (image?.path ?? null) : null)
 
   const {
     imageRef,
     hookScale,
     isDragging,
     resetTransform,
+    adjustScale,
     onFitScaleUpdate,
     handleMouseDown,
     handleMouseMove,
@@ -85,6 +93,16 @@ export function ImageViewer({ image }: ImageViewerProps) {
       setZoomPercent(Math.round(Math.min(cw / nw, ch / nh, 1) * 100))
     }
   }, [resetRequestCount]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (zoomInCount === 0) return
+    adjustScale(1.25)
+  }, [zoomInCount]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (zoomOutCount === 0) return
+    adjustScale(0.8)
+  }, [zoomOutCount]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Pre-fetch adjacent images into browser cache
   useEffect(() => {
@@ -150,6 +168,7 @@ export function ImageViewer({ image }: ImageViewerProps) {
         }}
         draggable={false}
       />
+      {showHistogram && histogram && <Histogram data={histogram} />}
     </Box>
   )
 }
