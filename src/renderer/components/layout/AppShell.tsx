@@ -8,6 +8,7 @@ import { FilmStrip } from '../gallery/FilmStrip'
 import { EmptyState } from '../gallery/EmptyState'
 import { EditorCanvas } from '../editor/EditorCanvas'
 import { ExifPanel } from '../viewer/ExifPanel'
+import { ShortcutsModal } from '../common/ShortcutsModal'
 import { useImages } from '../../hooks/useImages'
 import { useKeyboardShortcuts } from '../../hooks/useKeyboardShortcuts'
 import { useEditorStore } from '../../stores/editorStore'
@@ -22,6 +23,7 @@ export function AppLayout() {
   const showExifPanel = exifPanelOpen && !isEditing && !!currentImage
 
   return (
+    <>
     <MantineAppShell
       header={{ height: 38 }}
       navbar={{ width: 220, breakpoint: 'sm' }}
@@ -83,5 +85,7 @@ export function AppLayout() {
         )}
       </MantineAppShell.Main>
     </MantineAppShell>
+    <ShortcutsModal />
+    </>
   )
 }
