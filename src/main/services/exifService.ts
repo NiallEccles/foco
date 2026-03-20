@@ -19,8 +19,7 @@ export async function getExifData(imagePath: string): Promise<ExifData | null> {
       pick: [
         'Make', 'Model', 'LensModel',
         'ISO', 'FNumber', 'ExposureTime', 'FocalLength',
-        'DateTimeOriginal',
-        'GPSLatitude', 'GPSLongitude'
+        'DateTimeOriginal'
       ],
       translateValues: false
     })
@@ -41,8 +40,15 @@ export async function getExifData(imagePath: string): Promise<ExifData | null> {
         ? parsed.DateTimeOriginal.toISOString()
         : String(parsed.DateTimeOriginal)
     }
-    if (parsed.GPSLatitude != null) data.gpsLatitude = parsed.GPSLatitude
-    if (parsed.GPSLongitude != null) data.gpsLongitude = parsed.GPSLongitude
+    try {
+      const gps = await exifr.gps(imagePath)
+      if (gps?.latitude != null && gps?.longitude != null) {
+        data.gpsLatitude = gps.latitude
+        data.gpsLongitude = gps.longitude
+      }
+    } catch {
+      // no GPS data
+    }
 
     return Object.keys(data).length > 0 ? data : null
   } catch {
