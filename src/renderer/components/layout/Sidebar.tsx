@@ -85,6 +85,7 @@ export function Sidebar() {
             {["left", "right"].includes(filmStripOrientation) && <Text size="xs" c="dimmed">↑ / ↓ — switch image</Text>}
             {["bottom"].includes(filmStripOrientation) && <Text size="xs" c="dimmed">← / → — switch image</Text>}
             <Text size="xs" c="dimmed">d / Del — soft delete</Text>
+            <Text size="xs" c="dimmed">? — all shortcuts</Text>
           </>
         )}
       </Stack>
