@@ -10,6 +10,10 @@ interface SettingsState {
   setFilmStripOrientation: (orientation: FilmStripOrientation) => void
   exifPanelOpen: boolean
   toggleExifPanel: () => void
+  showHistogram: boolean
+  toggleHistogram: () => void
+  showShortcuts: boolean
+  toggleShortcuts: () => void
   recentFolders: string[]
   addRecentFolder: (path: string) => void
 }
@@ -21,6 +25,10 @@ export const useSettingsStore = create<SettingsState>()(
       setFilmStripOrientation: (orientation) => set({ filmStripOrientation: orientation }),
       exifPanelOpen: false,
       toggleExifPanel: () => set((s) => ({ exifPanelOpen: !s.exifPanelOpen })),
+      showHistogram: false,
+      toggleHistogram: () => set((s) => ({ showHistogram: !s.showHistogram })),
+      showShortcuts: false,
+      toggleShortcuts: () => set((s) => ({ showShortcuts: !s.showShortcuts })),
       recentFolders: [],
       addRecentFolder: (path) =>
         set((s) => ({
