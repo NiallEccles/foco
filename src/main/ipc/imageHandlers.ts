@@ -2,6 +2,7 @@ import { ipcMain, dialog } from 'electron'
 import { applyOperations, getImageMetadata } from '../services/imageService'
 import type { ImageOperation } from '../services/imageService'
 import { getExifData } from '../services/exifService'
+import { getHistogram } from '../services/histogramService'
 
 export function registerImageHandlers(): void {
   ipcMain.handle(
@@ -32,5 +33,9 @@ export function registerImageHandlers(): void {
 
   ipcMain.handle('get-exif-data', async (_event, imagePath: string) => {
     return getExifData(imagePath)
+  })
+
+  ipcMain.handle('get-histogram', async (_event, imagePath: string) => {
+    return getHistogram(imagePath)
   })
 }
