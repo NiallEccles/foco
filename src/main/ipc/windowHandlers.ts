@@ -18,4 +18,10 @@ export function registerWindowHandlers(): void {
   ipcMain.on('open-external', (_event, url: string) => {
     shell.openExternal(url)
   })
+
+  ipcMain.on('window-fullscreen-toggle', (event) => {
+    const win = BrowserWindow.fromWebContents(event.sender)
+    if (!win) return
+    win.setFullScreen(!win.isFullScreen())
+  })
 }
