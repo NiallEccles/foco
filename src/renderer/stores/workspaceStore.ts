@@ -42,9 +42,11 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
     const result = await api.openFolder()
     if (result) {
       useSettingsStore.getState().addRecentFolder(result.folderPath)
+      const deleted = await api.listDeleted(result.folderPath)
       set({
         folderPath: result.folderPath,
         images: result.images,
+        deletedImages: deleted,
         currentIndex: 0,
         isLoading: false
       })
@@ -56,9 +58,12 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
   openFolderPath: async (folderPath) => {
     set({ isLoading: true })
     try {
-      const images = await api.listImages(folderPath)
+      const [images, deleted] = await Promise.all([
+        api.listImages(folderPath),
+        api.listDeleted(folderPath)
+      ])
       useSettingsStore.getState().addRecentFolder(folderPath)
-      set({ folderPath, images, currentIndex: 0, isLoading: false, viewMode: 'browse' })
+      set({ folderPath, images, deletedImages: deleted, currentIndex: 0, isLoading: false, viewMode: 'browse' })
     } catch {
       set({ isLoading: false })
     }
