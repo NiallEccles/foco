@@ -19,7 +19,9 @@ const api: FocoAPI = {
   getThumbnail: (imagePath: string, folderPath: string) =>
     ipcRenderer.invoke('get-thumbnail', imagePath, folderPath),
   getExifData: (imagePath: string) => ipcRenderer.invoke('get-exif-data', imagePath),
-  openExternal: (url: string) => ipcRenderer.send('open-external', url)
+  getHistogram: (imagePath: string) => ipcRenderer.invoke('get-histogram', imagePath),
+  openExternal: (url: string) => ipcRenderer.send('open-external', url),
+  toggleFullscreen: () => ipcRenderer.send('window-fullscreen-toggle')
 }
 
 contextBridge.exposeInMainWorld('api', api)
