@@ -122,6 +122,28 @@ export function useCanvasTransform(
     }
   }, [])
 
+  const adjustScale = useCallback((factor: number) => {
+    const oldHS = hookScaleRef.current
+    const newHS = Math.min(Math.max(oldHS * factor, MIN_HOOK_SCALE), MAX_HOOK_SCALE)
+    if (newHS <= MIN_HOOK_SCALE) {
+      hookScaleRef.current = MIN_HOOK_SCALE
+      txRef.current = 0
+      tyRef.current = 0
+      applyTransform(MIN_HOOK_SCALE, 0, 0)
+      setHookScale(MIN_HOOK_SCALE)
+      return
+    }
+    const oldEffective = oldHS * fitScaleRef.current
+    const newEffective = newHS * fitScaleRef.current
+    const newTx = txRef.current * (newEffective / oldEffective)
+    const newTy = tyRef.current * (newEffective / oldEffective)
+    hookScaleRef.current = newHS
+    txRef.current = newTx
+    tyRef.current = newTy
+    applyTransform(newHS, newTx, newTy)
+    setHookScale(newHS)
+  }, [applyTransform, fitScaleRef])
+
   const handleDoubleClick = useCallback((e: React.MouseEvent) => {
     const fitScale = fitScaleRef.current
     if (hookScaleRef.current > MIN_HOOK_SCALE) {
@@ -162,6 +184,7 @@ export function useCanvasTransform(
     hookScale,
     isDragging,
     resetTransform,
+    adjustScale,
     onFitScaleUpdate,
     handleMouseDown,
     handleMouseMove,
