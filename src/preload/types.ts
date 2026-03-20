@@ -35,6 +35,13 @@ export interface ImageMetadata {
   height: number
 }
 
+export interface HistogramData {
+  r: number[]
+  g: number[]
+  b: number[]
+  luma: number[]
+}
+
 export interface ExifData {
   make?: string
   model?: string
@@ -63,5 +70,7 @@ export interface FocoAPI {
   getImageMetadata: (imagePath: string) => Promise<ImageMetadata>
   getThumbnail: (imagePath: string, folderPath: string) => Promise<string>
   getExifData: (imagePath: string) => Promise<ExifData | null>
+  getHistogram: (imagePath: string) => Promise<HistogramData>
   openExternal: (url: string) => void
+  toggleFullscreen: () => void
 }
